@@ -4,6 +4,10 @@ This source code is based on [C version AES](https://github.com/dhuertas/AES).<b
 If you want to use this source code, please input data and make another function.<br>
 This code don't be executed, but will support you if you use this class.
 
+## Plan
+
+- Set this code to GUI environment.
+
 ## Contribution
 
 It's is very good, and thanks you if you want to contribute this repo or contribute this.<br>
