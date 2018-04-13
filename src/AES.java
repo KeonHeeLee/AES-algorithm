@@ -18,16 +18,14 @@ class AES {
 		int p = 0, i = 0, hbs = 0;
 
 		for (i = 0; i < 8; i++) {
-			if ((b & 1)!=0x00) {
+			if ((b & 1)!=0x00) 
 				p ^= a;
-			}
-
+			
 			hbs = a & 0x80;
 			a <<= 1;
 			if (hbs!=0x00) a ^= 0x1b; // 0000 0001 0001 1011	
 			b >>= 1;
 		}
-
 		return (int)p;
 	}
 
@@ -36,7 +34,6 @@ class AES {
 	 * m(x) = x4+1
 	 */
 	private void coef_add(int a[], int b[], int d[]) {
-
 		d[0] = a[0]^b[0];
 		d[1] = a[1]^b[1];
 		d[2] = a[2]^b[2];
@@ -48,7 +45,6 @@ class AES {
 	 * m(x) = x4+1
 	 */
 	private void coef_mult(int[] a, int[] b, int[] d) {
-
 		d[0] = gmult(a[0],b[0])^gmult(a[3],b[1])^gmult(a[2],b[2])^gmult(a[1],b[3]);
 		d[1] = gmult(a[1],b[0])^gmult(a[0],b[1])^gmult(a[3],b[2])^gmult(a[2],b[3]);
 		d[2] = gmult(a[2],b[0])^gmult(a[1],b[1])^gmult(a[0],b[2])^gmult(a[3],b[3]);
@@ -155,7 +151,6 @@ class AES {
 	 * Key length equals 128 bits/16 bytes).
 	 */
 	public void add_round_key(int[] state, int[] w, int r) {
-		
 		int c;
 		
 		for (c = 0; c < Nb; c++) {
@@ -172,7 +167,6 @@ class AES {
 	 * produce new columns.
 	 */
 	public void mix_columns(int[] state) {
-
 		int a[] = {0x02, 0x01, 0x01, 0x03}; // a(x) = {02} + {01}x + {01}x2 + {03}x3
 		int i, j, col[], res[];
 		
@@ -197,7 +191,6 @@ class AES {
 	 * MixColumns().
 	 */
 	public void inv_mix_columns(int[] state) {
-
 		int a[] = {0x0e, 0x09, 0x0d, 0x0b}; // a(x) = {0e} + {09}x + {0d}x2 + {0b}x3
 		int i, j, col[], res[];
 		
@@ -205,15 +198,14 @@ class AES {
 		res = new int[4];
 
 		for (j = 0; j < Nb; j++) {
-			for (i = 0; i < 4; i++) {
+			for (i = 0; i < 4; i++) 
 				col[i] = state[Nb*i+j];
-			}
 
 			coef_mult(a, col, res);
 
-			for (i = 0; i < 4; i++) {
+			for (i = 0; i < 4; i++) 
 				state[Nb*i+j] = res[i];
-			}
+			
 		}
 	}
 
@@ -232,9 +224,8 @@ class AES {
 			while (s < i) {
 				tmp = state[Nb*i+0];
 				
-				for (k = 1; k < Nb; k++) {
+				for (k = 1; k < Nb; k++) 
 					state[Nb*i+k-1] = state[Nb*i+k];
-				}
 
 				state[Nb*i+Nb-1] = tmp;
 				s++;
@@ -247,7 +238,6 @@ class AES {
 	 * ShiftRows().
 	 */
 	public void inv_shift_rows(int[] state) {
-
 		int i, k, s, tmp;
 
 		for (i = 1; i < 4; i++) {
@@ -255,10 +245,9 @@ class AES {
 			while (s < i) {
 				tmp = state[Nb*i+Nb-1];
 				
-				for (k = Nb-1; k > 0; k--) {
+				for (k = Nb-1; k > 0; k--) 
 					state[Nb*i+k] = state[Nb*i+k-1];
-				}
-
+				
 				state[Nb*i+0] = tmp;
 				s++;
 			}
@@ -271,7 +260,6 @@ class AES {
 	 * State bytes independently. 
 	 */
 	public void sub_bytes(int[] state) {
-
 		int i, j;
 		int row, col;
 
@@ -289,7 +277,6 @@ class AES {
 	 * SubBytes().
 	 */
 	public void inv_sub_bytes(int[] state) {
-
 		int i, j;
 		int row, col;
 
@@ -308,12 +295,11 @@ class AES {
 	 * produce an output word.
 	 */
 	public void sub_word(int[] w) {
-
 		int i;
 
-		for (i = 0; i < 4; i++) {
+		for (i = 0; i < 4; i++) 
 			w[i] = s_box[16*((w[i] & 0xf0) >> 4) + (w[i] & 0x0f)];
-		}
+		
 	}
 
 	/*
@@ -321,16 +307,13 @@ class AES {
 	 * word and performs a cyclic permutation. 
 	 */
 	public void rot_word(int[] w) {
-
 		int tmp;
 		int i;
 
 		tmp = w[0];
 
-		for (i = 0; i < 3; i++) {
+		for (i = 0; i < 3; i++) 
 			w[i] = w[i+1];
-		}
-
 		w[3] = tmp;
 	}
 
@@ -357,16 +340,11 @@ class AES {
 			tmp[3] = w[4*(i-1)+3];
 
 			if (i%Nk == 0) {
-
 				rot_word(tmp);
 				sub_word(tmp);
 				coef_add(tmp, Rcon(i/Nk), tmp);
-
-			} else if (Nk > 6 && i%Nk == 4) {
-
+			} else if (Nk > 6 && i%Nk == 4) 
 				sub_word(tmp);
-
-			}
 
 			w[4*i+0] = w[4*(i-Nk)+0]^tmp[0];
 			w[4*i+1] = w[4*(i-Nk)+1]^tmp[1];
@@ -376,15 +354,12 @@ class AES {
 	}
 
 	public void cipher(int[] in, int[] out, int[] w) {
-
 		int[] state = new int[4*Nb];
 		int r, i, j;
 
-		for (i = 0; i < 4; i++) {
-			for (j = 0; j < Nb; j++) {
+		for (i = 0; i < 4; i++) 
+			for (j = 0; j < Nb; j++) 
 				state[Nb*i+j] = in[i+4*j];
-			}
-		}
 
 		add_round_key(state, w, 0);
 
@@ -394,29 +369,23 @@ class AES {
 			mix_columns(state);
 			add_round_key(state, w, r);
 		}
-
 		sub_bytes(state);
 		shift_rows(state);
 		add_round_key(state, w, Nr);
 
-		for (i = 0; i < 4; i++) {
-			for (j = 0; j < Nb; j++) {
-				out[i+4*j] = state[Nb*i+j];
-			}
-		}
+		for (i = 0; i < 4; i++) 
+			for (j = 0; j < Nb; j++) 
+				out[i+4*j] = state[Nb*i+j];	
 	}
 
 	public void inv_cipher(int[] in, int[] out, int[] w) {
-
 		int[] state = new int[4*Nb];
 		int r, i, j;
 
-		for (i = 0; i < 4; i++) {
-			for (j = 0; j < Nb; j++) {
+		for (i = 0; i < 4; i++) 
+			for (j = 0; j < Nb; j++) 
 				state[Nb*i+j] = in[i+4*j];
-			}
-		}
-
+			
 		add_round_key(state, w, Nr);
 
 		for (r = Nr-1; r >= 1; r--) {
@@ -430,11 +399,9 @@ class AES {
 		inv_sub_bytes(state);
 		add_round_key(state, w, 0);
 
-		for (i = 0; i < 4; i++) {
-			for (j = 0; j < Nb; j++) {
+		for (i = 0; i < 4; i++) 
+			for (j = 0; j < Nb; j++) 
 				out[i+4*j] = state[Nb*i+j];
-			}
-		}
 	}
 	
 	public void get_input(int[] in) {
@@ -442,7 +409,6 @@ class AES {
 		
 		for(int i=0; i<16; i++) 
 			this.in[i] = in[i];
-		
 		/*int in[] = {
 				0x00, 0x11, 0x22, 0x33,
 				0x44, 0x55, 0x66, 0x77,
@@ -453,7 +419,6 @@ class AES {
 	
 	public void start() {
 		int i;
-
 		/*
 		 * Appendix A - Key Expansion Examples
 		 */
@@ -525,7 +490,6 @@ class AES {
 			0x1c, 0x1d, 0x1e, 0x1f};
 		
 		int[] out = new int[16]; // 128
-		
 		int[] w; // expanded key
 
 		switch (key.length) {
@@ -545,15 +509,11 @@ class AES {
 					+" 0x"+Integer.toHexString(in[4*i+2])
 					+" 0x"+Integer.toHexString(in[4*i+3])+" ");
 		}
-
 		System.out.print("\n");	
-		
 		key_expansion(key, w);
 
 		cipher(in /* in */, out /* out */, w /* expanded key */);
-
 		System.out.print("out:\n");
-		
 		for (i = 0; i < 4; i++) {
 			System.out.print(
 					"0x"+Integer.toHexString(out[4*i+0])
@@ -563,7 +523,6 @@ class AES {
 		}
 
 		System.out.print("\n");
-
 		inv_cipher(out, in, w);
 	}
 }
