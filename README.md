@@ -7,7 +7,6 @@ This code don't be executed, but will support you if you use this class.<br>
 ## Plan
 
 - Set this code to GUI environment.
-<br>
 
 ## Contribution
 
